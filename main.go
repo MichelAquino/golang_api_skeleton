@@ -1,10 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+
+	_ "github.com/go-sql-driver/mysql"
+
+	"fmt"
 
 	"github.com/labstack/echo"
 	"github.com/michelaquino/golang_api_skeleton/context"
@@ -32,6 +37,7 @@ func main() {
 	// Configure routes
 	configureAllRoutes(echoInstance)
 
+	testMysql()
 	logger.Info("Main", "main", "", "", "start app", "success", "Started at port 8888!")
 	echoInstance.Logger.Fatal(echoInstance.Start(":8888"))
 }
@@ -100,4 +106,30 @@ func createNewRelicApp() (newrelic.Application, error) {
 	}
 
 	return newRelicApp, nil
+}
+
+func testMysql() {
+	config := context.GetAPIConfig()
+
+	mysqlConnectionString := fmt.Sprintf("%s:%s@tcp(%s:3306)/hello",
+		config.MySQLConfig.User,
+		config.MySQLConfig.Password,
+		config.MySQLConfig.URL)
+
+	db, err := sql.Open("mysql", mysqlConnectionString)
+	if err != nil {
+		fmt.Println("[MYSQL] Error on connect to database: ", err.Error())
+		return
+		// log.Fatal(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("[MYSQL] Error on PING: ", err.Error())
+		return
+		// do something here
+	}
+
+	fmt.Println("[MYSQL] Connected on MySQL With success")
+	defer db.Close()
 }

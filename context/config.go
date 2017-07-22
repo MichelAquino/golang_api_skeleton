@@ -30,11 +30,20 @@ type RedisConfig struct {
 	RedisPassword string
 }
 
+// MySQLConfig represents the MySQL configuration
+type MySQLConfig struct {
+	URL      string
+	User     string
+	Password string
+	Database string
+}
+
 // APIConfig represents the API configuration
 type APIConfig struct {
 	LogConfig     *LogConfig
 	MongoDBConfig *MongoConfig
 	RedisConfig   *RedisConfig
+	MySQLConfig   *MySQLConfig
 }
 
 var apiConfig *APIConfig
@@ -47,6 +56,7 @@ func GetAPIConfig() *APIConfig {
 			LogConfig:     getLogConfig(),
 			MongoDBConfig: getMongoConfig(),
 			RedisConfig:   getRedisConfig(),
+			MySQLConfig:   getMySQLConfig(),
 		}
 	})
 
@@ -111,4 +121,13 @@ func getMongoTimeout() time.Duration {
 	}
 
 	return time.Duration(mongoTimeout) * time.Second
+}
+
+func getMySQLConfig() *MySQLConfig {
+	return &MySQLConfig{
+		URL:      os.Getenv("MYSQL_URL"),
+		User:     os.Getenv("MYSQL_USER"),
+		Password: os.Getenv("MYSQL_PASSWORD"),
+		Database: os.Getenv("MYSQL_DATABASE"),
+	}
 }

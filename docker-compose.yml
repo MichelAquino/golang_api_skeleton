@@ -26,12 +26,21 @@ services:
             - MONGO_TIMEOUT=60
             - MONGO_DATABASE_NAME=api
             - REDIS_URL=redis
+            - MYSQL_URL=mysql
+            - MYSQL_USER=golang
+            - MYSQL_PASSWORD=golangUserPassword
+            - MYSQL_DATABASE=example
     mongodb:
         image: mongo:3.2.10
     mysql:
         image: mysql/mysql-server:latest
         environment:
-            - MYSQL_ROOT_PASSWORD=mysqlPassword
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=golang
+            - MYSQL_PASSWORD=golangUserPassword
+            - MYSQL_DATABASE=example
+        ports:
+            - 3306:3306
     redis:
         image: redis:3
     
