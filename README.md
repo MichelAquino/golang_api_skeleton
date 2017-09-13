@@ -12,6 +12,8 @@
   - [mgo - MongoDB driver](https://github.com/go-mgo/mgo/tree/v2)
   - [Go-Redis](github.com/go-redis/redis)
 
+  - [Prometheus - Monitoring system](https://github.com/prometheus) 
+
 ## Dependencies
 
 - Docker
@@ -29,11 +31,15 @@
 
 ## Usage
 `curl http://localhost/healthcheck`
-`curl -X POST -d '{"name": "user name", "email": "user@email.com"}' http://localhost/user`
+
+`curl -i -X POST -H 'Content-Type: application/json' -d '{"name": "user name", "email": "user@email.com"}' http://localhost/user`
+
+### Prometheus
+Access http://localhost:9090 to view Prometheus metrics
 
 ## Release History
 
-* 0.2.0
+* 0.3.0
     * Work in progress
 
 ## Meta

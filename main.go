@@ -17,6 +17,7 @@ import (
 	apiMiddleware "github.com/michelaquino/golang_api_skeleton/middleware"
 	"github.com/michelaquino/golang_api_skeleton/repository"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -43,7 +44,13 @@ func main() {
 }
 
 func configureAllRoutes(echoInstance *echo.Echo) {
+	// Metrics by Prometheus
+	configureMetrics(echoInstance)
+
+	// Healthcheck
 	configureHealthcheckRoute(echoInstance)
+
+	// User routes
 	configureUserRoutes(echoInstance)
 }
 
@@ -57,6 +64,11 @@ func configureUserRoutes(echoInstance *echo.Echo) {
 
 	userGroup := echoInstance.Group("/user")
 	userGroup.POST("", userHandler.CreateUser)
+}
+
+// configureMetrics is the method that configure Prometheus metrics route
+func configureMetrics(echoInstance *echo.Echo) {
+	echoInstance.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 }
 
 // configureNewRelic is the method that enable the new relic
