@@ -15,5 +15,20 @@ func Healthcheck(echoContext echo.Context) error {
 	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)
 
 	healthcheckHandlerLog.Info("Handlers", "Healthcheck", requestLogData.ID, requestLogData.OriginIP, "Verify Healthcheck", "success", "")
+
+	testMysql()
+
 	return echoContext.String(http.StatusOK, "WORKING")
+}
+
+func testMysql() {
+	log := context.GetLogger()
+
+	err := context.CheckMysqlConn()
+	if err != nil {
+		log.Error("Main", "testMysql", "", "", "", "Error", err.Error())
+		return
+	}
+
+	log.Info("Main", "testMysql", "", "", "", "Success", "")
 }

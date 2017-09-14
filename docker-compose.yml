@@ -26,12 +26,16 @@ services:
             - MONGO_TIMEOUT=60
             - MONGO_DATABASE_NAME=api
             - REDIS_URL=redis
-            - MYSQL_URL=mysql
-            - MYSQL_USER=golang
-            - MYSQL_PASSWORD=golangUserPassword
-            - MYSQL_DATABASE=example
+
+            - MYSQL_HOST=mysql
+            - MYSQL_PORT=3306
+            - MYSQL_DATABASE_NAME=example
+            - MYSQL_DATABASE_USERNAME=golang
+            - MYSQL_DATABASE_PASSWORD=golangUserPassword
     mongodb:
         image: mongo:3.2.10
+        volumes:
+            - /tmp/db/mongodb:/var/lib/db
     mysql:
         image: mysql/mysql-server:latest
         environment:
@@ -41,6 +45,8 @@ services:
             - MYSQL_DATABASE=example
         ports:
             - 3306:3306
+        volumes:
+            - /tmp/db/mysql:/var/lib/db
     redis:
         image: redis:3
     prometheus:

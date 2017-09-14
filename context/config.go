@@ -32,8 +32,9 @@ type RedisConfig struct {
 
 // MySQLConfig represents the MySQL configuration
 type MySQLConfig struct {
-	URL      string
-	User     string
+	Host     string
+	Port     string
+	Username string
 	Password string
 	Database string
 }
@@ -125,9 +126,10 @@ func getMongoTimeout() time.Duration {
 
 func getMySQLConfig() *MySQLConfig {
 	return &MySQLConfig{
-		URL:      os.Getenv("MYSQL_URL"),
-		User:     os.Getenv("MYSQL_USER"),
-		Password: os.Getenv("MYSQL_PASSWORD"),
-		Database: os.Getenv("MYSQL_DATABASE"),
+		Host:     os.Getenv("MYSQL_HOST"),
+		Port:     os.Getenv("MYSQL_PORT"),
+		Username: os.Getenv("MYSQL_DATABASE_USERNAME"),
+		Password: os.Getenv("MYSQL_DATABASE_PASSWORD"),
+		Database: os.Getenv("MYSQL_DATABASE_NAME"),
 	}
 }
