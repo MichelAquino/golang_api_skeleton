@@ -29,24 +29,23 @@ services:
 
             - MYSQL_HOST=mysql
             - MYSQL_PORT=3306
-            - MYSQL_DATABASE_NAME=example
+            - MYSQL_DATABASE_NAME=skeleton_database
             - MYSQL_DATABASE_USERNAME=golang
-            - MYSQL_DATABASE_PASSWORD=golangUserPassword
+            - MYSQL_DATABASE_PASSWORD=golang
     mongodb:
         image: mongo:3.2.10
         volumes:
             - /tmp/db/mongodb:/var/lib/db
     mysql:
-        image: mysql/mysql-server:latest
+        image: mysql:latest
+        restart: always
         environment:
-            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_ROOT_PASSWORD=my-secret-pw
             - MYSQL_USER=golang
-            - MYSQL_PASSWORD=golangUserPassword
-            - MYSQL_DATABASE=example
-        ports:
-            - 3306:3306
+            - MYSQL_PASSWORD=golang
+            - MYSQL_DATABASE=skeleton_database
         volumes:
-            - /tmp/db/mysql:/var/lib/db
+            - /tmp/db/mysql:/var/lib/mysql
     redis:
         image: redis:3
     prometheus:

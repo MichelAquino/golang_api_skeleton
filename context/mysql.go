@@ -42,6 +42,6 @@ func GetMysqlConnection() *sql.DB {
 
 func CheckMysqlConn() error {
 	conn := GetMysqlConnection()
-	_, err := conn.Query("SELECT 1 FROM DUAL")
+	err := conn.Ping()
 	return err
 }
