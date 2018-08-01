@@ -10,14 +10,14 @@ var (
 	userMongoCollectionName = "user"
 )
 
-// UserMongoRepository is a user repository for MongoDB
+// UserMongoRepository is a user repository for MongoDB.
 type UserMongoRepository struct{}
 
-// Insert is a method that insert a user on database
+// Insert is a method that inserts an user into database.
 func (u UserMongoRepository) Insert(requestLogData models.RequestLogData, userToInsert models.UserModel) error {
 	log := context.GetLogger()
 
-	// Execute the insert
+	// Execute Mongo's Insert
 	err := mongo.Insert(userMongoCollectionName, &userToInsert)
 	if err != nil {
 		log.Error("UserMongoRepository", "Create", requestLogData.ID, requestLogData.OriginIP, "Create user", "Error", err.Error())

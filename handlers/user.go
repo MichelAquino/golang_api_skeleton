@@ -10,19 +10,19 @@ import (
 	"github.com/michelaquino/golang_api_skeleton/repository"
 )
 
-// UserHandler is a struct that
+// UserHandler is a struct that stores an userRepository.
 type UserHandler struct {
 	userRepository repository.UserRepository
 }
 
-// NewUserHandler return a new pointer of user struct
+// NewUserHandler returns a new pointer of user's struct.
 func NewUserHandler(userRepository repository.UserRepository) *UserHandler {
 	return &UserHandler{
 		userRepository: userRepository,
 	}
 }
 
-// CreateUser is a hendler that create a new user on database
+// CreateUser is a handler that creates a new user into database.
 func (h UserHandler) CreateUser(echoContext echo.Context) error {
 	userHandlerLog := context.GetLogger()
 	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)

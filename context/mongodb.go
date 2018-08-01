@@ -10,7 +10,7 @@ import (
 var mongoSession *mgo.Session
 var onceDatabase sync.Once
 
-// GetMongoSession return a copy of mongodb session
+// GetMongoSession returns a copy of MongoDB session.
 func GetMongoSession() *mgo.Session {
 	onceDatabase.Do(func() {
 		var err error

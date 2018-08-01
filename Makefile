@@ -12,18 +12,18 @@ help:
 setup:
 	dep ensure -v
 
-test:	## start unit tests
+test:	## Start unit tests
 	@for pkg in $(PROJECT_PKGS); do \
 		$(GOCMD) test -v -race -cover $$pkg || exit 1; \
 	done
 
-docker-compose-build-api: ## Build the application image
+docker-compose-build-api: ## Build application's image
 	@docker-compose build
 
-docker-compose-up-api: ## Up the application image
+docker-compose-up-api: ## Up application's image
 	@docker-compose up
 
-docker-compose-stop-api: ## Stop the application containers
+docker-compose-stop-api: ## Stop application's containers
 	@docker-compose stop
 
-run: docker-compose-build-api docker-compose-up-api ## Run the application loccaly
+run: docker-compose-build-api docker-compose-up-api ## Run application locally

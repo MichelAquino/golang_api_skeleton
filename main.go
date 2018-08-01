@@ -58,12 +58,12 @@ func configureUserRoutes(echoInstance *echo.Echo) {
 	userGroup.POST("", userHandler.CreateUser)
 }
 
-// configureMetrics is the method that configure Prometheus metrics route
+// configureMetrics is the method that configures Prometheus metrics' route.
 func configureMetrics(echoInstance *echo.Echo) {
 	echoInstance.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 }
 
-// configureNewRelic is the method that enable the new relic
+// configureNewRelic is the method that enables New Relic.
 func configureNewRelic(echoInstance *echo.Echo) {
 	logger := apiContext.GetLogger()
 
@@ -88,7 +88,7 @@ func configureNewRelic(echoInstance *echo.Echo) {
 	logger.Info("Main", "configureNewRelic", "", "", "Enabling New Relic", "Success", "New Relic DISABLED")
 }
 
-// createNewRelicApp is the method that create new relic config
+// createNewRelicApp is the method that creates New Relic configuration.
 func createNewRelicApp() (newrelic.Application, error) {
 	log := apiContext.GetLogger()
 	licenseKeyEnvVar := os.Getenv("NEW_RELIC_LICENSE_KEY")

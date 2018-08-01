@@ -10,12 +10,12 @@ import (
 	"github.com/go-redis/redis"
 )
 
-// RedisCache is a redis cache object
+// RedisCache is a redis cache object.
 type RedisCache struct {
 	client *redis.Client
 }
 
-// NewRedisCache returns a new instance of the RedisCache
+// NewRedisCache returns a new instance of RedisCache.
 func NewRedisCache() *RedisCache {
 	cacheLogger := context.GetLogger()
 	apiConfig := context.GetAPIConfig()
@@ -40,7 +40,7 @@ func NewRedisCache() *RedisCache {
 	}
 }
 
-// Get is a method that get an value from cache
+// Get is a method that gets a value from cache.
 func (r RedisCache) Get(key string) (string, error) {
 	cacheLogger := context.GetLogger()
 
@@ -59,7 +59,7 @@ func (r RedisCache) Get(key string) (string, error) {
 	return cacheValue, nil
 }
 
-// Set is a method that set a value to cache
+// Set is a method that sets a value to cache.
 func (r RedisCache) Set(key, value string, expireInSec int) error {
 	cacheLogger := context.GetLogger()
 

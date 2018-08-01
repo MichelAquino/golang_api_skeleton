@@ -1,23 +1,23 @@
-# Se baseia na imagem https://hub.docker.com/_/golang/
+# Based on this image: https://hub.docker.com/_/golang/
 FROM golang:latest
 
-# Instala godep
+# Install godep
 RUN go get -u github.com/golang/dep/cmd/dep
 
-# Copia o diretorio local para o diretorio do container
+# Copy directory locally to container's directory
 ADD . $GOPATH/src/github.com/michelaquino/golang_api_skeleton
 
-# Seta diretório de trabalho
+# Set work directory
 WORKDIR /go/src/github.com/michelaquino/golang_api_skeleton
 
-# Instala dependencias
+# Install dependencies
 RUN make setup
 
-# Compila aplicação
+# Compile application
 RUN GOOS=linux GOARCH=amd64 go build -o golang_api_skeleton main.go
 
-# Executa a aplicacao quando o container for iniciado
+# Execite application when container is started
 ENTRYPOINT /go/src/github.com/michelaquino/golang_api_skeleton/golang_api_skeleton
 
-# Expoe a porta 8080
+# Expose 8080 port
 EXPOSE 8080

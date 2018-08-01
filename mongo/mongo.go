@@ -14,7 +14,7 @@ const (
 )
 
 func Insert(collection string, objectToInsert interface{}) error {
-	// Now time to metrics
+	// Now time for metrics
 	now := time.Now()
 
 	session := context.GetMongoSession()
@@ -26,7 +26,7 @@ func Insert(collection string, objectToInsert interface{}) error {
 	connection := session.DB(mongoDatabaseName).C(collection)
 	err := connection.Insert(&objectToInsert)
 
-	// Send metrics to prometheus
+	// Send metrics to Prometheus
 	metrics.MongoDBDurationsSumary.WithLabelValues("Insert").Observe(time.Since(now).Seconds())
 	metrics.MongoDBDurationsHistogram.WithLabelValues("Insert").Observe(time.Since(now).Seconds())
 
@@ -40,7 +40,7 @@ func Insert(collection string, objectToInsert interface{}) error {
 }
 
 func FindOne(collection string, query bson.M, object interface{}) error {
-	// Now time to metrics
+	// Now time for metrics
 	now := time.Now()
 
 	session := context.GetMongoSession()
@@ -66,7 +66,7 @@ func FindOne(collection string, query bson.M, object interface{}) error {
 }
 
 func FindAll(collection string, query bson.M) ([]interface{}, error) {
-	// Now time to metrics
+	// Now time for metrics
 	now := time.Now()
 
 	session := context.GetMongoSession()
@@ -93,7 +93,7 @@ func FindAll(collection string, query bson.M) ([]interface{}, error) {
 }
 
 func Remove(collection string, query bson.M) error {
-	// Now time to metrics
+	// Now time for metrics
 	now := time.Now()
 
 	session := context.GetMongoSession()
@@ -119,7 +119,7 @@ func Remove(collection string, query bson.M) error {
 }
 
 func Update(collection string, objectID bson.ObjectId, objectToUpdate interface{}) error {
-	// Now time to metrics
+	// Now time for metrics
 	now := time.Now()
 
 	log := context.GetLogger()

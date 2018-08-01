@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-// LogConfig represents the log configuration
+// LogConfig represents Log configuration.
 type LogConfig struct {
 	LogLevel    string
 	LogToFile   bool
 	LogFileName string
 }
 
-// MongoConfig represents the MongoDB configuration
+// MongoConfig represents MongoDB configuration.
 type MongoConfig struct {
 	Address      string
 	DatabaseName string
@@ -24,13 +24,13 @@ type MongoConfig struct {
 	Password     string
 }
 
-// RedisConfig represents the Redis configuration
+// RedisConfig represents Redis configuration
 type RedisConfig struct {
 	RedisURL      string
 	RedisPassword string
 }
 
-// APIConfig represents the API configuration
+// APIConfig represents API configuration.
 type APIConfig struct {
 	LogConfig     *LogConfig
 	MongoDBConfig *MongoConfig
@@ -41,14 +41,14 @@ type APIConfig struct {
 var apiConfig *APIConfig
 var onceConfig sync.Once
 
-// GetAPIConfig return the instance of the APIConfig
+// GetAPIConfig returns the instance of an APIConfig.
 func GetAPIConfig() *APIConfig {
 	onceConfig.Do(func() {
 		apiConfig = &APIConfig{
 			LogConfig:     getLogConfig(),
 			MongoDBConfig: getMongoConfig(),
 			RedisConfig:   getRedisConfig(),
-			HostPort:      getApiHostPort(), // TODO: colocar no skeleton
+			HostPort:      getAPIHostPort(),
 		}
 	})
 
@@ -115,7 +115,7 @@ func getMongoTimeout() time.Duration {
 	return time.Duration(mongoTimeout) * time.Second
 }
 
-func getApiHostPort() int {
+func getAPIHostPort() int {
 	apiPort, err := strconv.Atoi(os.Getenv("HOST_PORT"))
 	if err != nil {
 		apiPort = 8888

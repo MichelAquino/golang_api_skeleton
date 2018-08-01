@@ -1,5 +1,5 @@
 # Golang API Skeleton
-> A simple API skeleton writen in Go
+> A simple API skeleton written in Go
 
 
 [![Build Status](https://travis-ci.org/michelaquino/golang_api_skeleton.svg?branch=master)](https://travis-ci.org/michelaquino/golang_api_skeleton)
@@ -11,17 +11,16 @@
   - [Echo Framework](https://github.com/labstack/echo)
   - [mgo - MongoDB driver](https://github.com/go-mgo/mgo/tree/v2)
   - [Go-Redis](github.com/go-redis/redis)
-
   - [Prometheus - Monitoring system](https://github.com/prometheus) 
 
 ## Dependencies
 
 - Docker
-- Docker compose
+- Docker Compose
 
 ## Configuration
 - Docker Compose
-    - Nginx with `proxy_pass` pre configurated
+    - Nginx with `proxy_pass` preconfigured
     - API
     - MongoDB
     - Redis
@@ -35,7 +34,7 @@
 `curl -i -X POST -H 'Content-Type: application/json' -d '{"name": "user name", "email": "user@email.com"}' http://localhost/user`
 
 ### Prometheus
-Access http://localhost:9090 to view Prometheus metrics
+Access http://localhost:9090 to view Prometheus' metrics.
 
 ## Release History
 

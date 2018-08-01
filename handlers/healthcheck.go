@@ -9,7 +9,7 @@ import (
 	"github.com/michelaquino/golang_api_skeleton/models"
 )
 
-// Healthcheck is a method that respond only WORKING
+// Healthcheck is a method that responds only WORKING.
 func Healthcheck(echoContext echo.Context) error {
 	healthcheckHandlerLog := context.GetLogger()
 	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)
