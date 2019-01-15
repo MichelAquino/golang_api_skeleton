@@ -55,7 +55,7 @@ func (r RedisCache) Get(key string) (string, error) {
 		return "", apierror.ErrGetCacheValue
 	}
 
-	cacheLogger.Error("RedisCache", "Get", "", "", "Get key", "Success", "Object getted with success")
+	cacheLogger.Info("RedisCache", "Get", "", "", "Get key", "Success", "Object getted with success")
 	return cacheValue, nil
 }
 
