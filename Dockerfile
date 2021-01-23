@@ -1,23 +1,38 @@
-# Based on this image: https://hub.docker.com/_/golang/
-FROM golang:latest
+########################### Build Base ###########################
+FROM golang:1.15-alpine as build_base
 
-# Install godep
-RUN go get -u github.com/golang/dep/cmd/dep
+RUN apk add git make
 
-# Copy directory locally to container's directory
-ADD . $GOPATH/src/github.com/michelaquino/golang_api_skeleton
+# Add the current directory to be build
+WORKDIR /app
 
-# Set work directory
-WORKDIR /go/src/github.com/michelaquino/golang_api_skeleton
+######## Environment variables ########
+# Force the go compiler to use modules
+ENV GO111MODULE=on
 
-# Install dependencies
+# Disable Go proxy
+ENV GOPROXY=direct
+
+######## Install dependencies ########
+COPY go.mod .
+COPY go.sum .
+COPY Makefile .
 RUN make setup
 
-# Compile application
-RUN GOOS=linux GOARCH=amd64 go build -o golang_api_skeleton main.go
+############################# Builder ############################
+FROM build_base AS builder
 
-# Execite application when container is started
-ENTRYPOINT /go/src/github.com/michelaquino/golang_api_skeleton/golang_api_skeleton
+COPY . /app
 
-# Expose 8080 port
-EXPOSE 8080
+# Build the image for Linux instances
+RUN make build
+
+############################# Runner #############################
+FROM alpine:latest
+
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+RUN update-ca-certificates
+
+COPY --from=builder /app/golang_api_skeleton /app/golang_api_skeleton
+
+ENTRYPOINT ["/app/golang_api_skeleton"]
