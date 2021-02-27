@@ -1,10 +1,10 @@
 package context
 
 import (
-	"os"
-	"strconv"
+	"strings"
 	"sync"
 
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -127,7 +127,7 @@ func getNewLogInstance() *zap.Logger {
 }
 
 func getLogLevel() zapcore.Level {
-	logLevelConfig := os.Getenv("LOG_LEVEL")
+	logLevelConfig := strings.ToLower(viper.GetString("log.level"))
 	if logLevelConfig == "debug" {
 		return zap.DebugLevel
 	}
@@ -146,13 +146,9 @@ func getLogLevel() zapcore.Level {
 func getLogOutputPaths() []string {
 	paths := []string{"stderr"}
 
-	sendLogToFile := false
-	if logToFile, err := strconv.ParseBool(os.Getenv("LOG_TO_FILE")); err == nil {
-		sendLogToFile = logToFile
-	}
-
+	sendLogToFile := viper.GetBool("log.to.file")
 	if sendLogToFile {
-		logFileName := os.Getenv("LOG_FILE_NAME")
+		logFileName := viper.GetString("log.file.name")
 		paths = append(paths, logFileName)
 	}
 

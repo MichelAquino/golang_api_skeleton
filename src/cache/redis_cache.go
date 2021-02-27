@@ -6,6 +6,7 @@ import (
 
 	apierror "github.com/michelaquino/golang_api_skeleton/src/api_errors"
 	"github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/spf13/viper"
 
 	"github.com/go-redis/redis"
 )
@@ -18,15 +19,14 @@ type RedisCache struct {
 // NewRedisCache returns a new instance of RedisCache.
 func NewRedisCache() *RedisCache {
 	cacheLogger := context.GetLogger()
-	apiConfig := context.GetAPIConfig()
 
 	var redisClient *redis.Client
 	cacheLogger.Info("NewRedisCache", "Constructor", "", "", "", "", "")
 	redisClient = redis.NewClient(&redis.Options{
 		ReadTimeout:  time.Duration(1) * time.Second,
 		WriteTimeout: time.Duration(1) * time.Second,
-		Addr:         apiConfig.RedisConfig.RedisURL,
-		Password:     apiConfig.RedisConfig.RedisPassword,
+		Addr:         viper.GetString("redis.url"),
+		Password:     viper.GetString("redis.password"),
 		DB:           0,
 		PoolSize:     5000,
 	})

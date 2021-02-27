@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/spf13/viper"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -26,15 +27,18 @@ func GetMongoSession() *mgo.Session {
 }
 
 func getNewMongoSession() (*mgo.Session, error) {
-	apiConfig := GetAPIConfig()
+	mongoURL := viper.GetString("mongo.url")
+	mongoPort := viper.GetInt("mongo.port")
+	mongoAddress := fmt.Sprintf("%s:%d", mongoURL, mongoPort)
+
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs: []string{
-			apiConfig.MongoDBConfig.Address,
+			mongoAddress,
 		},
-		Database: apiConfig.MongoDBConfig.DatabaseName,
-		Timeout:  apiConfig.MongoDBConfig.Timeout,
-		Username: apiConfig.MongoDBConfig.Username,
-		Password: apiConfig.MongoDBConfig.Password,
+		Database: viper.GetString("mongo.database.name"),
+		Timeout:  viper.GetDuration("mongo.timeout"),
+		Username: viper.GetString("mongo.username"),
+		Password: viper.GetString("mongo.password"),
 	}
 
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)

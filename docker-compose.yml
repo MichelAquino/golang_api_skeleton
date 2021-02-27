@@ -15,11 +15,11 @@ services:
             - redis
             - mysql
         environment:
-            HOST_PORT: 8888
+            API_HOST_PORT: 8888
             LOG_LEVEL: debug
             LOG_FILE_NAME: api.log
             LOG_TO_FILE: "false"
-            ENABLE_NEW_RELIC: "false"
+            NEW_RELIC_IS_ENABLED: "false"
             NEW_RELIC_LICENSE_KEY: key
             NEW_RELIC_PROXY_URL: http://newrelicproxy.com
             MONGO_URL: mongodb 
