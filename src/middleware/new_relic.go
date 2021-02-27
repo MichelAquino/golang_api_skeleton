@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	newrelic "github.com/newrelic/go-agent"
 )
 

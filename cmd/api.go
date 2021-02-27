@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/michelaquino/golang_api_skeleton/config"
 	"github.com/michelaquino/golang_api_skeleton/src/handlers"
 	"github.com/michelaquino/golang_api_skeleton/src/repository"
@@ -41,7 +42,16 @@ func start() {
 	configureNewRelic(ctx, echoInstance)
 
 	// Middlewares
+	echoInstance.Pre(middleware.RemoveTrailingSlash())
 	echoInstance.Use(apiMiddleware.AssignRequestID)
+	echoInstance.Use(apiMiddleware.RequestLogger)
+	echoInstance.Use(middleware.Recover())
+	echoInstance.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		ErrorHandler: func(err error, e echo.Context) error {
+			return echo.NewHTTPError(http.StatusGatewayTimeout)
+		},
+		Timeout: viper.GetDuration("api.handler.timeout"),
+	}))
 
 	// Configure routes
 	configureAllRoutes(echoInstance)
@@ -83,17 +93,16 @@ func configureMetrics(echoInstance *echo.Echo) {
 // configureNewRelic is the method that enables New Relic.
 func configureNewRelic(ctx context.Context, echoInstance *echo.Echo) {
 	newRelicEnable := viper.GetBool("new_relic.is.enabled")
-	if newRelicEnable {
-		if newRelicApp, err := createNewRelicApp(ctx); err == nil {
-			logger.Info(ctx, "enabling New Relic", "success", nil)
-			echoInstance.Use(apiMiddleware.NewRelicMiddleware(newRelicApp))
-		} else {
-			logger.Error(ctx, "enabling New Relic", err.Error(), nil)
-		}
-
+	if !newRelicEnable {
 		return
 	}
 
+	newRelicApp, err := createNewRelicApp(ctx)
+	if err != nil {
+		logger.Error(ctx, "enabling New Relic", err.Error(), nil)
+	}
+
+	echoInstance.Use(apiMiddleware.NewRelicMiddleware(newRelicApp))
 	logger.Info(ctx, "enabling New Relic", "success", nil)
 }
 

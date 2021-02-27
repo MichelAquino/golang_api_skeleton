@@ -17,6 +17,7 @@ func Init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	viper.SetDefault("api.host.port", 8888)
+	viper.SetDefault("api.handler.timeout", "500ms")
 
 	viper.SetDefault("log.level", "ERROR")
 	viper.SetDefault("log.file.name", "")
