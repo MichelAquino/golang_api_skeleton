@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/michelaquino/golang_api_skeleton/context"
-	apiMiddleware "github.com/michelaquino/golang_api_skeleton/middleware"
-	"github.com/michelaquino/golang_api_skeleton/models"
+	"github.com/michelaquino/golang_api_skeleton/src/context"
+	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
 )
 
 // Healthcheck is a method that responds only WORKING.

@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"github.com/michelaquino/golang_api_skeleton/context"
-	"github.com/michelaquino/golang_api_skeleton/models"
-	"github.com/michelaquino/golang_api_skeleton/mongo"
+	"github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
+	"github.com/michelaquino/golang_api_skeleton/src/mongo"
 )
 
 var (

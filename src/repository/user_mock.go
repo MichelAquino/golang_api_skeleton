@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/michelaquino/golang_api_skeleton/models"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
 	testifyMock "github.com/stretchr/testify/mock"
 )
 

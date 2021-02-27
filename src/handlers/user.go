@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/michelaquino/golang_api_skeleton/context"
-	apiMiddleware "github.com/michelaquino/golang_api_skeleton/middleware"
-	"github.com/michelaquino/golang_api_skeleton/models"
-	"github.com/michelaquino/golang_api_skeleton/repository"
+	"github.com/michelaquino/golang_api_skeleton/src/context"
+	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
+	"github.com/michelaquino/golang_api_skeleton/src/repository"
 )
 
 // UserHandler is a struct that stores an userRepository.

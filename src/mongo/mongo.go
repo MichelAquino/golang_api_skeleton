@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/michelaquino/golang_api_skeleton/context"
-	"github.com/michelaquino/golang_api_skeleton/metrics"
+	"github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/michelaquino/golang_api_skeleton/src/metrics"
 	"gopkg.in/mgo.v2/bson"
 )
 

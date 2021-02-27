@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/michelaquino/golang_api_skeleton/api_errors"
-	"github.com/michelaquino/golang_api_skeleton/context"
+	apierror "github.com/michelaquino/golang_api_skeleton/src/api_errors"
+	"github.com/michelaquino/golang_api_skeleton/src/context"
 
 	"github.com/go-redis/redis"
 )

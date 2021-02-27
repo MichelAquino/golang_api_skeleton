@@ -19,7 +19,7 @@ setup:
 
 ## build: build the application to linux
 build:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags="-X 'main.Version=${RELEASE_VERSION}'" o golang_api_skeleton main.go
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags="-X 'main.Version=${RELEASE_VERSION}'" -o golang_api_skeleton main.go
 
 ## test: run unit tests
 test:	

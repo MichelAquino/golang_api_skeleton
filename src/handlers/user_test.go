@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	apiMiddleware "github.com/michelaquino/golang_api_skeleton/middleware"
-	"github.com/michelaquino/golang_api_skeleton/models"
-	"github.com/michelaquino/golang_api_skeleton/repository"
+	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
+	"github.com/michelaquino/golang_api_skeleton/src/repository"
 
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/labstack/echo"
-	"github.com/michelaquino/golang_api_skeleton/models"
+	"github.com/michelaquino/golang_api_skeleton/src/models"
 	uuid "github.com/satori/go.uuid"
 )
 

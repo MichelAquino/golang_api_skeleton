@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/michelaquino/golang_api_skeleton/models"
+import "github.com/michelaquino/golang_api_skeleton/src/models"
 
 // UserRepository is a interface that defines methods to user's repository.
 type UserRepository interface {

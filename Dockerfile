@@ -1,5 +1,5 @@
 ########################### Build Base ###########################
-FROM golang:1.15-alpine as build_base
+FROM golang:1.16-alpine as build_base
 
 RUN apk add git make
 
@@ -35,4 +35,4 @@ RUN update-ca-certificates
 
 COPY --from=builder /app/golang_api_skeleton /app/golang_api_skeleton
 
-ENTRYPOINT ["/app/golang_api_skeleton"]
+ENTRYPOINT ["/app/golang_api_skeleton", "api"]
