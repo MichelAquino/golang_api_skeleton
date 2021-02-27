@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/go-redis/redis v6.12.0+incompatible
+	github.com/google/uuid v1.2.0
 	github.com/labstack/echo v3.3.5+incompatible
 	github.com/labstack/gommon v0.2.2-0.20180613044413-d6898124de91 // indirect
 	github.com/newrelic/go-agent v1.11.0

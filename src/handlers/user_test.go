@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
-	"github.com/michelaquino/golang_api_skeleton/src/models"
 	"github.com/michelaquino/golang_api_skeleton/src/repository"
 
 	"github.com/labstack/echo"
@@ -22,7 +20,6 @@ var (
 	userRepositoryMock *repository.UserRepositoryMock
 	userHandler        *UserHandler
 	serverMock         *httptest.Server
-	requestLogDataMock models.RequestLogData
 )
 
 func setupUserHandlerTest(t *testing.T) {
@@ -33,11 +30,6 @@ func setupUserHandlerTest(t *testing.T) {
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, "response")
 		}))
-
-	requestLogDataMock = models.RequestLogData{
-		ID:       "RequestIDMock",
-		OriginIP: "187.298.0.123",
-	}
 }
 
 func Test_CreateUser_ShouldReturnStatusInternalServerErrorWhenRepositoryReturnError(t *testing.T) {
@@ -85,7 +77,5 @@ func getTestBaseObjects(body io.Reader) (*httptest.ResponseRecorder, echo.Contex
 	echoContext := echoInstance.NewContext(request, recorder)
 
 	echoContext.SetRequest(request)
-	echoContext.Set(apiMiddleware.RequestIDKey, requestLogDataMock)
-
 	return recorder, echoContext
 }

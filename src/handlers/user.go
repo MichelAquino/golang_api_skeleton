@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/michelaquino/golang_api_skeleton/src/context"
-	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
 	"github.com/michelaquino/golang_api_skeleton/src/models"
 	"github.com/michelaquino/golang_api_skeleton/src/repository"
 )
@@ -24,20 +22,17 @@ func NewUserHandler(userRepository repository.UserRepository) *UserHandler {
 
 // CreateUser is a handler that creates a new user into database.
 func (h UserHandler) CreateUser(echoContext echo.Context) error {
-	userHandlerLog := context.GetLogger()
-	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)
-
 	userModel := models.UserModel{}
 	if err := echoContext.Bind(&userModel); err != nil {
-		userHandlerLog.Error("UserHandler", "CreateUser", requestLogData.ID, requestLogData.OriginIP, "Bind payload to model", "Error", err.Error())
+		logger.Error(echoContext.Request().Context(), "bind payload to model", err.Error(), nil)
 		return echoContext.NoContent(http.StatusBadRequest)
 	}
 
-	if err := h.userRepository.Insert(requestLogData, userModel); err != nil {
-		userHandlerLog.Error("UserHandler", "CreateUser", requestLogData.ID, requestLogData.OriginIP, "Create user", "Error", err.Error())
+	if err := h.userRepository.Insert(echoContext.Request().Context(), userModel); err != nil {
+		logger.Error(echoContext.Request().Context(), "create user", err.Error(), nil)
 		return echoContext.NoContent(http.StatusInternalServerError)
 	}
 
-	userHandlerLog.Info("UserHandler", "CreateUser", requestLogData.ID, requestLogData.OriginIP, "Create user", "Success", "")
+	logger.Info(echoContext.Request().Context(), "create user", "success", nil)
 	return echoContext.NoContent(http.StatusCreated)
 }

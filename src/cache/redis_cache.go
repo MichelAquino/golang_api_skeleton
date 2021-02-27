@@ -1,14 +1,19 @@
 package cache
 
 import (
-	"strconv"
+	"context"
+	"fmt"
 	"time"
 
 	apierror "github.com/michelaquino/golang_api_skeleton/src/api_errors"
-	"github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/michelaquino/golang_api_skeleton/src/log"
 	"github.com/spf13/viper"
 
 	"github.com/go-redis/redis"
+)
+
+var (
+	logger = log.GetLogger()
 )
 
 // RedisCache is a redis cache object.
@@ -18,10 +23,8 @@ type RedisCache struct {
 
 // NewRedisCache returns a new instance of RedisCache.
 func NewRedisCache() *RedisCache {
-	cacheLogger := context.GetLogger()
-
 	var redisClient *redis.Client
-	cacheLogger.Info("NewRedisCache", "Constructor", "", "", "", "", "")
+	ctx := context.Background()
 	redisClient = redis.NewClient(&redis.Options{
 		ReadTimeout:  time.Duration(1) * time.Second,
 		WriteTimeout: time.Duration(1) * time.Second,
@@ -32,7 +35,7 @@ func NewRedisCache() *RedisCache {
 	})
 
 	if _, err := redisClient.Ping().Result(); err != nil {
-		cacheLogger.Error("NewRedisCache", "Constructor", "", "", "Ping Redis", "Error", err.Error())
+		logger.Error(ctx, "ping Redis", err.Error(), nil)
 	}
 
 	return &RedisCache{
@@ -41,35 +44,35 @@ func NewRedisCache() *RedisCache {
 }
 
 // Get is a method that gets a value from cache.
-func (r RedisCache) Get(key string) (string, error) {
-	cacheLogger := context.GetLogger()
-
+func (r RedisCache) Get(ctx context.Context, key string) (string, error) {
 	cacheValue, err := r.client.Get(key).Result()
+
+	logAction := fmt.Sprintf("get key %s", key)
 	if err == redis.Nil {
-		cacheLogger.Debug("RedisCache", "Get", "", "", "Get key", "Key "+key+" not found on cache", redis.Nil.Error())
+		logger.Info(ctx, logAction, "", nil)
 		return "", apierror.ErrNotFoundOnCache
 	}
 
 	if err != nil {
-		cacheLogger.Error("RedisCache", "Get", "", "", "Get key", "Error", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return "", apierror.ErrGetCacheValue
 	}
 
-	cacheLogger.Info("RedisCache", "Get", "", "", "Get key", "Success", "Object getted with success")
+	logger.Info(ctx, logAction, "success", nil)
 	return cacheValue, nil
 }
 
 // Set is a method that sets a value to cache.
-func (r RedisCache) Set(key, value string, expireInSec int) error {
-	cacheLogger := context.GetLogger()
-
+func (r RedisCache) Set(ctx context.Context, key, value string, expireInSec int) error {
 	expire := time.Duration(expireInSec) * time.Second
 
+	logAction := fmt.Sprintf("get key %s with expiration %d", key, expireInSec)
 	err := r.client.Set(key, value, expire).Err()
 	if err != nil {
-		cacheLogger.Error("RedisCache", "Set", "", "", "Set key/value on cache", "Error", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
+		return err
 	}
 
-	cacheLogger.Debug("RedisCache", "Set", "", "", "Set key/value on cache", "Success", "Set key "+key+" on cache with expire in "+strconv.Itoa(expireInSec)+" seconds")
-	return err
+	logger.Debug(ctx, logAction, "success", nil)
+	return nil
 }

@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	continueWatching = "continue_watching"
+	logEncodingKeyValue string = "key-value"
+	logEncodingJSON     string = "json"
 )
 
 // Init application config
@@ -20,6 +21,7 @@ func Init() {
 	viper.SetDefault("log.level", "ERROR")
 	viper.SetDefault("log.file.name", "")
 	viper.SetDefault("log.to.file", false)
+	viper.SetDefault("log.encoding", logEncodingJSON)
 
 	viper.SetDefault("new_relic.is.enabled", false)
 	viper.SetDefault("new_relic.licence.key", "")

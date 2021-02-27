@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
 
 	"github.com/labstack/echo"
+	"github.com/michelaquino/golang_api_skeleton/config"
 	"github.com/michelaquino/golang_api_skeleton/src/handlers"
 	"github.com/michelaquino/golang_api_skeleton/src/repository"
 	newrelic "github.com/newrelic/go-agent"
@@ -13,8 +15,12 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	apiContext "github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/michelaquino/golang_api_skeleton/src/log"
 	apiMiddleware "github.com/michelaquino/golang_api_skeleton/src/middleware"
+)
+
+var (
+	logger = log.GetLogger()
 )
 
 var apiCmd = &cobra.Command{
@@ -22,26 +28,26 @@ var apiCmd = &cobra.Command{
 	Short: "Starts API service",
 	Long:  `Starts API service.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// config.Init()
+		config.Init()
 		start()
 	},
 }
 
 func start() {
-	logger := apiContext.GetLogger()
 	echoInstance := echo.New()
+	ctx := context.Background()
 
 	// Configure New Relic
-	configureNewRelic(echoInstance)
+	configureNewRelic(ctx, echoInstance)
 
 	// Middlewares
-	echoInstance.Use(apiMiddleware.RequestLogDataMiddleware())
+	echoInstance.Use(apiMiddleware.AssignRequestID)
 
 	// Configure routes
 	configureAllRoutes(echoInstance)
 
 	port := viper.GetInt("api.host.port")
-	logger.Info("Main", "main", "", "", "", fmt.Sprintf("Started at %d", port), "")
+	logger.Info(ctx, "start api", fmt.Sprintf("Started at %d", port), nil)
 	route := fmt.Sprintf(":%d", port)
 	echoInstance.Logger.Fatal(echoInstance.Start(route))
 }
@@ -75,33 +81,30 @@ func configureMetrics(echoInstance *echo.Echo) {
 }
 
 // configureNewRelic is the method that enables New Relic.
-func configureNewRelic(echoInstance *echo.Echo) {
-	logger := apiContext.GetLogger()
-
+func configureNewRelic(ctx context.Context, echoInstance *echo.Echo) {
 	newRelicEnable := viper.GetBool("new_relic.is.enabled")
 	if newRelicEnable {
-		if newRelicApp, err := createNewRelicApp(); err == nil {
-			logger.Info("Main", "configureNewRelic", "", "", "Enabling New Relic", "Success", "New Relic ENABLED")
+		if newRelicApp, err := createNewRelicApp(ctx); err == nil {
+			logger.Info(ctx, "enabling New Relic", "success", nil)
 			echoInstance.Use(apiMiddleware.NewRelicMiddleware(newRelicApp))
 		} else {
-			logger.Error("Main", "configureNewRelic", "", "", "Enabling New Relic", "Error", err.Error())
+			logger.Error(ctx, "enabling New Relic", err.Error(), nil)
 		}
 
 		return
 	}
 
-	logger.Info("Main", "configureNewRelic", "", "", "Enabling New Relic", "Success", "New Relic DISABLED")
+	logger.Info(ctx, "enabling New Relic", "success", nil)
 }
 
 // createNewRelicApp is the method that creates New Relic configuration.
-func createNewRelicApp() (newrelic.Application, error) {
-	log := apiContext.GetLogger()
+func createNewRelicApp(ctx context.Context) (newrelic.Application, error) {
 	licenseKeyEnvVar := viper.GetString("new_relic.licence.key")
 
 	config := newrelic.NewConfig("My Awesome API", licenseKeyEnvVar)
 	proxyURL, err := url.Parse(viper.GetString("new_relic.proxy.url"))
 	if err != nil {
-		log.Error("Main", "createNewRelicApp", "", "", "Parse proxy url from env var", "Error", err.Error())
+		logger.Error(ctx, "parse proxy url from env var", err.Error(), nil)
 	}
 
 	config.Transport = &http.Transport{
@@ -110,7 +113,7 @@ func createNewRelicApp() (newrelic.Application, error) {
 
 	newRelicApp, err := newrelic.NewApplication(config)
 	if err != nil {
-		log.Error("Main", "createNewRelicApp", "", "", "Create New Relic APP ", "Error", err.Error())
+		logger.Error(ctx, "create New Relic APP ", err.Error(), nil)
 		return nil, err
 	}
 

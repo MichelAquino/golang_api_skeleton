@@ -1,10 +1,12 @@
 package mongo
 
 import (
+	"context"
 	"fmt"
 	"time"
 
-	"github.com/michelaquino/golang_api_skeleton/src/context"
+	appContext "github.com/michelaquino/golang_api_skeleton/src/context"
+	"github.com/michelaquino/golang_api_skeleton/src/log"
 	"github.com/michelaquino/golang_api_skeleton/src/metrics"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -13,15 +15,19 @@ const (
 	mongoDatabaseName = "api-skeleton"
 )
 
-func Insert(collection string, objectToInsert interface{}) error {
+var (
+	logger = log.GetLogger()
+)
+
+func Insert(ctx context.Context, collection string, objectToInsert interface{}) error {
 	// Now time for metrics
 	now := time.Now()
 
-	session := context.GetMongoSession()
+	session := appContext.GetMongoSession()
 	defer session.Close()
 
-	log := context.GetLogger()
-	log.Info("Mongo", "Insert", "", "", "", fmt.Sprintf("Inserting object in collection %s", collection), "")
+	logAction := fmt.Sprintf("Inserting object in collection %s", collection)
+	logger.Info(ctx, logAction, "", nil)
 
 	connection := session.DB(mongoDatabaseName).C(collection)
 	err := connection.Insert(&objectToInsert)
@@ -31,24 +37,23 @@ func Insert(collection string, objectToInsert interface{}) error {
 	metrics.MongoDBDurationsHistogram.WithLabelValues("Insert").Observe(time.Since(now).Seconds())
 
 	if err != nil {
-		log.Error("Mongo", "Insert", "", "", "", "Error on insert object", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return err
 	}
 
-	log.Info("Mongo", "Insert", "", "", "", "Object inserted with success", "")
+	logger.Info(ctx, logAction, "object inserted with success", nil)
 	return nil
 }
 
-func FindOne(collection string, query bson.M, object interface{}) error {
+func FindOne(ctx context.Context, collection string, query bson.M, object interface{}) error {
 	// Now time for metrics
 	now := time.Now()
 
-	session := context.GetMongoSession()
+	session := appContext.GetMongoSession()
 	defer session.Close()
 
-	log := context.GetLogger()
-
-	log.Info("Mongo", "Find", "", "", "", fmt.Sprintf("Getting object in collection %s", collection), "")
+	logAction := fmt.Sprintf("getting object in collection %s", collection)
+	logger.Info(ctx, logAction, "", nil)
 	connection := session.DB(mongoDatabaseName).C(collection)
 
 	err := connection.Find(query).One(object)
@@ -57,25 +62,26 @@ func FindOne(collection string, query bson.M, object interface{}) error {
 	metrics.MongoDBDurationsHistogram.WithLabelValues("FindOne").Observe(time.Since(now).Seconds())
 
 	if err != nil {
-		log.Error("Mongo", "Find", "", "", "", "Error on getting object", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return err
 	}
 
-	log.Info("Mongo", "Find", "", "", "", "Object getted with success", "")
+	logger.Info(ctx, logAction, "object got with success", nil)
 	return nil
 }
 
-func FindAll(collection string, query bson.M) ([]interface{}, error) {
+func FindAll(ctx context.Context, collection string, query bson.M) ([]interface{}, error) {
 	// Now time for metrics
 	now := time.Now()
 
-	session := context.GetMongoSession()
+	session := appContext.GetMongoSession()
 	defer session.Close()
 
-	log := context.GetLogger()
 	var objectList []interface{}
 
-	log.Info("Mongo", "FindAll", "", "", "", fmt.Sprintf("Getting object list in collection %s", collection), "")
+	logAction := fmt.Sprintf("getting object list in collection %s", collection)
+	logger.Info(ctx, logAction, "", nil)
+
 	connection := session.DB(mongoDatabaseName).C(collection)
 
 	err := connection.Find(query).All(&objectList)
@@ -84,24 +90,23 @@ func FindAll(collection string, query bson.M) ([]interface{}, error) {
 	metrics.MongoDBDurationsHistogram.WithLabelValues("FindAll").Observe(time.Since(now).Seconds())
 
 	if err != nil {
-		log.Error("Mongo", "FindAll", "", "", "", "Error on getting object list", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return nil, err
 	}
 
-	log.Info("Mongo", "FindAll", "", "", "", "Object list getted with success", "")
+	logger.Info(ctx, logAction, "object list getted with success", nil)
 	return objectList, nil
 }
 
-func Remove(collection string, query bson.M) error {
+func Remove(ctx context.Context, collection string, query bson.M) error {
 	// Now time for metrics
 	now := time.Now()
 
-	session := context.GetMongoSession()
+	session := appContext.GetMongoSession()
 	defer session.Close()
 
-	log := context.GetLogger()
-
-	log.Info("Mongo", "Remove", "", "", "", fmt.Sprintf("Removing object in collection %s", collection), "")
+	logAction := fmt.Sprintf("removing object in collection %s", collection)
+	logger.Info(ctx, logAction, "", nil)
 	connection := session.DB(mongoDatabaseName).C(collection)
 
 	_, err := connection.RemoveAll(query)
@@ -110,22 +115,22 @@ func Remove(collection string, query bson.M) error {
 	metrics.MongoDBDurationsHistogram.WithLabelValues("Remove").Observe(time.Since(now).Seconds())
 
 	if err != nil {
-		log.Error("Mongo", "Remove", "", "", "", "Error on remove object", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return err
 	}
 
-	log.Info("Mongo", "Remove", "", "", "", "Object removed with success", "")
+	logger.Info(ctx, logAction, "object removed with success", nil)
 	return nil
 }
 
-func Update(collection string, objectID bson.ObjectId, objectToUpdate interface{}) error {
+func Update(ctx context.Context, collection string, objectID bson.ObjectId, objectToUpdate interface{}) error {
 	// Now time for metrics
 	now := time.Now()
 
-	log := context.GetLogger()
-	log.Info("Mongo", "Update", "", "", "", fmt.Sprintf("Updating object in collection %s", collection), "")
+	logAction := fmt.Sprintf("updating object in collection  %s", collection)
+	logger.Info(ctx, logAction, "", nil)
 
-	session := context.GetMongoSession()
+	session := appContext.GetMongoSession()
 	defer session.Close()
 
 	query := bson.M{"_id": bson.ObjectIdHex(objectID.Hex())}
@@ -138,10 +143,10 @@ func Update(collection string, objectID bson.ObjectId, objectToUpdate interface{
 	metrics.MongoDBDurationsHistogram.WithLabelValues("Update").Observe(time.Since(now).Seconds())
 
 	if err != nil {
-		log.Error("Mongo", "Update", "", "", "", "Error on update object", err.Error())
+		logger.Error(ctx, logAction, err.Error(), nil)
 		return err
 	}
 
-	log.Info("Mongo", "Update", "", "", "", "Object updated with success", "")
+	logger.Info(ctx, logAction, "object updated with success", nil)
 	return nil
 }
