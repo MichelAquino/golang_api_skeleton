@@ -3,52 +3,117 @@ package cache
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	apierror "github.com/michelaquino/golang_api_skeleton/src/api_errors"
 	"github.com/michelaquino/golang_api_skeleton/src/log"
-	"github.com/spf13/viper"
 
-	"github.com/go-redis/redis"
+	goredis "github.com/go-redis/redis/v8"
 )
 
 var (
 	logger = log.GetLogger()
 )
 
-// RedisCache is a redis cache object.
-type RedisCache struct {
-	client *redis.Client
+// Config has the redis configs
+type Config struct {
+	Name                  string
+	Topology              string
+	Host                  string
+	Port                  int
+	Password              string
+	SentinelMasterName    string
+	PoolSize              int
+	MinIdleConnections    int
+	PoolTimeout           time.Duration
+	ConnectionIdleTimeout time.Duration
+	DialTimeout           time.Duration
+	ReadTimeout           time.Duration
+	WriteTimeout          time.Duration
+	MaxRetries            int
+	MaxRetryBackoff       time.Duration
 }
 
-// NewRedisCache returns a new instance of RedisCache.
-func NewRedisCache() *RedisCache {
-	var redisClient *redis.Client
-	ctx := context.Background()
-	redisClient = redis.NewClient(&redis.Options{
-		ReadTimeout:  time.Duration(1) * time.Second,
-		WriteTimeout: time.Duration(1) * time.Second,
-		Addr:         viper.GetString("redis.url"),
-		Password:     viper.GetString("redis.password"),
-		DB:           0,
-		PoolSize:     5000,
-	})
+// RedisCache is a redis cache object.
+type RedisCache struct {
+	client goredis.UniversalClient
+}
 
-	if _, err := redisClient.Ping().Result(); err != nil {
-		logger.Error(ctx, "ping Redis", err.Error(), nil)
+// NewRedis instantiate a new redis cluster client
+func NewRedis(config Config) *RedisCache {
+	addresses := config.getAddresses()
+	var universalClient goredis.UniversalClient
+
+	switch config.Topology {
+	case "cluster":
+		universalClient = goredis.NewClusterClient(&goredis.ClusterOptions{
+			Addrs:    addresses,
+			Password: config.Password,
+
+			PoolSize:    config.PoolSize,
+			PoolTimeout: config.PoolTimeout,
+
+			MinIdleConns: config.MinIdleConnections,
+			IdleTimeout:  config.ConnectionIdleTimeout,
+
+			DialTimeout:  config.DialTimeout,
+			ReadTimeout:  config.ReadTimeout,
+			WriteTimeout: config.WriteTimeout,
+
+			MaxRetries:      config.MaxRetries,
+			MaxRetryBackoff: config.MaxRetryBackoff,
+		})
+	case "sentinel":
+		universalClient = goredis.NewFailoverClient(&goredis.FailoverOptions{
+			MasterName: config.SentinelMasterName,
+
+			SentinelAddrs: addresses,
+			Password:      config.Password,
+
+			PoolSize:    config.PoolSize,
+			PoolTimeout: config.PoolTimeout,
+
+			DialTimeout:  config.DialTimeout,
+			ReadTimeout:  config.ReadTimeout,
+			WriteTimeout: config.WriteTimeout,
+
+			MaxRetries:      config.MaxRetries,
+			MaxRetryBackoff: config.MaxRetryBackoff,
+
+			MinIdleConns: config.MinIdleConnections,
+			IdleTimeout:  config.ConnectionIdleTimeout,
+		})
+	default:
+		var redisAddress string
+		if len(addresses) > 0 {
+			redisAddress = addresses[0]
+		}
+
+		universalClient = goredis.NewClient(&goredis.Options{
+			Addr:     redisAddress,
+			Password: config.Password,
+
+			PoolSize:    config.PoolSize,
+			PoolTimeout: config.PoolTimeout,
+
+			MinIdleConns: config.MinIdleConnections,
+			IdleTimeout:  config.ConnectionIdleTimeout,
+
+			ReadTimeout:  config.ReadTimeout,
+			WriteTimeout: config.WriteTimeout,
+		})
 	}
 
-	return &RedisCache{
-		client: redisClient,
-	}
+	return &RedisCache{client: universalClient}
 }
 
 // Get is a method that gets a value from cache.
 func (r RedisCache) Get(ctx context.Context, key string) (string, error) {
-	cacheValue, err := r.client.Get(key).Result()
+	cacheValue, err := r.client.Get(ctx, key).Result()
 
 	logAction := fmt.Sprintf("get key %s", key)
-	if err == redis.Nil {
+	if err == goredis.Nil {
 		logger.Info(ctx, logAction, "", nil)
 		return "", apierror.ErrNotFoundOnCache
 	}
@@ -67,7 +132,7 @@ func (r RedisCache) Set(ctx context.Context, key, value string, expireInSec int)
 	expire := time.Duration(expireInSec) * time.Second
 
 	logAction := fmt.Sprintf("get key %s with expiration %d", key, expireInSec)
-	err := r.client.Set(key, value, expire).Err()
+	err := r.client.Set(ctx, key, value, expire).Err()
 	if err != nil {
 		logger.Error(ctx, logAction, err.Error(), nil)
 		return err
@@ -75,4 +140,13 @@ func (r RedisCache) Set(ctx context.Context, key, value string, expireInSec int)
 
 	logger.Debug(ctx, logAction, "success", nil)
 	return nil
+}
+
+func (c Config) getAddresses() []string {
+	addresses := strings.Split(c.Host, ",")
+	for i, address := range addresses {
+		addresses[i] = fmt.Sprintf("%s:%d", address, c.Port)
+	}
+
+	return addresses
 }

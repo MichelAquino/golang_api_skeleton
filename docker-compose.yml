@@ -27,7 +27,7 @@ services:
     mongodb:
         image: mongo:3.2.10
     redis:
-        image: redis:3
+        image: redis:6
     prometheus:
         image: prom/prometheus
         container_name: prometheus
