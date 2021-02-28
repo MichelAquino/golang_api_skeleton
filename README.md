@@ -36,17 +36,6 @@
 ### Prometheus
 Access http://localhost:9090 to view Prometheus' metrics.
 
-## Release History
-
-* 0.3.0
-    * Work in progress
-
-## Meta
-
-Michel Aquino – [@michelaquino](https://github.com/michelaquino)
-Vinicius Souza – [@vsouza](https://github.com/vsouza)
-
-
 [license-image]: https://img.shields.io/badge/License-GPL3.0-blue.svg
 [license-url]: LICENSE
 [travis-image]: https://img.shields.io/travis/michelaquinoe/golang_api_skeleton/master.svg

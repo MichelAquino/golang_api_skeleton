@@ -8,8 +8,6 @@ services:
             - api
     api:
         build: .
-        ports: 
-            - 8888:8888
         depends_on:
             - mongodb
             - redis
