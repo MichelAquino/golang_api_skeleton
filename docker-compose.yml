@@ -28,16 +28,12 @@ services:
         image: mongo:3.2.10
     redis:
         image: redis:3
-    # mysql:
-    #     image: mysql/mysql-server:latest
-    #     environment:
-    #         - MYSQL_ROOT_PASSWORD=mysqlPassword
-    # prometheus:
-    #     image: prom/prometheus
-    #     container_name: prometheus
-    #     volumes:
-    #         - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    #     command:
-    #         - '-config.file=/etc/prometheus/prometheus.yml'
-    #     ports: 
-    #         - 9090:9090
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+        ports: 
+            - 9090:9090
