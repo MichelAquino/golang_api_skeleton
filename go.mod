@@ -7,12 +7,12 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/labstack/echo/v4 v4.2.0
 	github.com/newrelic/go-agent v1.11.0
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v0.9.3
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
+	go.mongodb.org/mongo-driver v1.4.6
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect

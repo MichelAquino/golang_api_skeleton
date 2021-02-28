@@ -24,10 +24,13 @@ services:
             MONGO_TIMEOUT: 60
             MONGO_DATABASE_NAME: api
             REDIS_URL: redis
+        restart: unless-stopped
     mongodb:
-        image: mongo:3.2.10
+        image: mongo:4
+        restart: unless-stopped
     redis:
         image: redis:6
+        restart: unless-stopped
     prometheus:
         image: prom/prometheus
         container_name: prometheus
