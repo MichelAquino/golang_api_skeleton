@@ -1,5 +1,5 @@
 # Golang API Skeleton
-> A simple API skeleton written in Go
+> A simple API skeleton written in Go with metrics pre-configurated
 
 
 [![Build Status](https://travis-ci.org/michelaquino/golang_api_skeleton.svg?branch=master)](https://travis-ci.org/michelaquino/golang_api_skeleton)
@@ -11,7 +11,9 @@
   - [Echo Framework](https://github.com/labstack/echo)
   - [MongoDB driver](https://github.com/mongodb/mongo-go-driver)
   - [Go-Redis](github.com/go-redis/redis)
-  - [Prometheus - Monitoring system](https://github.com/prometheus) 
+  - [Prometheus](https://github.com/prometheus) 
+  - [Prometheus PushGateway](https://github.com/prometheus/pushgateway) 
+  - [Grafana](https://grafana.com/) 
 
 ## Dependencies
 
@@ -24,6 +26,9 @@
     - API
     - MongoDB
     - Redis
+    - Prometheus
+    - Prometheus Push Gateway
+    - Grafana
 
 ## Run
 `make run`
@@ -33,8 +38,10 @@
 
 `curl -i -X POST -H 'Content-Type: application/json' -d '{"name": "user name", "email": "user@email.com"}' http://localhost/user`
 
-### Prometheus
-Access http://localhost:9090 to view Prometheus' metrics.
+### Metrics
+Access:
+- http://localhost:3000 to view Grafana metrics pre-configurated
+- http://localhost:9090 to view Prometheus server
 
 [license-image]: https://img.shields.io/badge/License-GPL3.0-blue.svg
 [license-url]: LICENSE
